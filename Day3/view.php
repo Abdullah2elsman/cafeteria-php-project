@@ -1,14 +1,24 @@
 <?php
 
+require("auth/auth.php");
 include "db.php";
+
+if(!isset($_GET['id'])){
+header("Location: users.php");
+exit;
+}
 
 $id = $_GET['id'];
 
 $stm = $connection->prepare("SELECT * FROM users WHERE id=?");
-
 $stm->execute([$id]);
 
 $user = $stm->fetch(PDO::FETCH_ASSOC);
+
+if(!$user){
+echo "User not found";
+exit;
+}
 
 $image = !empty($user['image']) ? $user['image'] : "uploads/default.png";
 
@@ -17,6 +27,8 @@ $image = !empty($user['image']) ? $user['image'] : "uploads/default.png";
 <!DOCTYPE html>
 <html>
 <head>
+
+<title>User Details</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 

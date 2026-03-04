@@ -1,5 +1,6 @@
 <?php
 
+require("auth/auth.php");
 include "db.php";
 
 $result = $connection->query("SELECT * FROM users");
@@ -9,6 +10,8 @@ $result = $connection->query("SELECT * FROM users");
 <!DOCTYPE html>
 <html>
 <head>
+
+<title>Users</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -20,7 +23,17 @@ $result = $connection->query("SELECT * FROM users");
 
 <div class="card shadow p-4">
 
-<h3 class="mb-4 text-center">Users List</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+<h3>Users List</h3>
+
+<div>
+Welcome <b><?= $_SESSION['username'] ?></b>
+
+<a href="auth/logout.php" class="btn btn-danger btn-sm ms-2">Logout</a>
+</div>
+
+</div>
 
 <table class="table table-bordered table-hover align-middle">
 

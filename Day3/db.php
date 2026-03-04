@@ -1,5 +1,7 @@
 <?php
 
+require("auth/auth.php");
+
 try {
 
 $connection = new PDO(

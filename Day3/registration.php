@@ -1,3 +1,8 @@
+<?php
+require("auth/auth.php");
+include "db.php";
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +20,7 @@
 
 <h3 class="mb-4 text-center">Registration Form</h3>
 
-<form action="save.php" method="POST" enctype="multipart/form-data">
+<form action="save.php" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
 
 <div class="row">
 
@@ -45,7 +50,7 @@
 
 <div class="mb-3">
 <label>Country</label>
-<select name="country" class="form-select">
+<select name="country" class="form-select" required>
 <option value="">Select Country</option>
 <option>Egypt</option>
 <option>USA</option>
@@ -69,6 +74,8 @@
 <input type="checkbox" name="skills[]" value="MySQL"> MySQL
 <input type="checkbox" name="skills[]" value="J2SE"> J2SE
 
+<div class="text-danger" id="skillsError"></div>
+
 </div>
 
 <div class="mb-3">
@@ -89,7 +96,7 @@
 
 <div class="mb-3">
 <label>Profile Picture</label>
-<input type="file" name="image" class="form-control">
+<input type="file" name="image" class="form-control" accept=".jpg,.png">
 </div>
 
 <button class="btn btn-primary">Submit</button>
@@ -101,6 +108,50 @@
 </div>
 
 </div>
+
+
+<script>
+
+function validateForm(){
+
+let fname = document.querySelector("[name='fname']").value;
+let lname = document.querySelector("[name='lname']").value;
+let password = document.querySelector("[name='password']").value;
+let skills = document.querySelectorAll("input[name='skills[]']:checked");
+
+document.getElementById("fnameError").innerText = "";
+document.getElementById("lnameError").innerText = "";
+document.getElementById("passwordError").innerText = "";
+document.getElementById("skillsError").innerText = "";
+
+let valid = true;
+
+if(/\d/.test(fname)){
+document.getElementById("fnameError").innerText = "First name cannot contain numbers";
+valid = false;
+}
+
+if(/\d/.test(lname)){
+document.getElementById("lnameError").innerText = "Last name cannot contain numbers";
+valid = false;
+}
+
+if(skills.length === 0){
+document.getElementById("skillsError").innerText = "Please select at least one skill";
+valid = false;
+}
+
+if(!/^[a-z0-9_]{8}$/.test(password)){
+document.getElementById("passwordError").innerText =
+"Password must be 8 characters (lowercase letters, numbers, underscore only)";
+valid = false;
+}
+
+return valid;
+
+}
+
+</script>
 
 </body>
 </html>

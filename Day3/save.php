@@ -1,5 +1,6 @@
 <?php
 
+require("auth/auth.php");
 include "db.php";
 
 $errors = [];
@@ -20,7 +21,6 @@ $skills = isset($_POST['skills']) ? implode("|", $_POST['skills']) : "";
 
 // Validation
 
-
 // required fields
 if(empty($fname)) $errors[] = "First name is required";
 if(empty($lname)) $errors[] = "Last name is required";
@@ -40,7 +40,7 @@ $errors[] = "Last name must contain letters only";
 }
 
 // skills validation
-if(empty($_POST['skills'])){
+if(!isset($_POST['skills'])){
 $errors[] = "Please select at least one skill";
 }
 
@@ -50,9 +50,10 @@ $errors[] = "Password must be 8 characters (lowercase, numbers, underscore only)
 }
 
 
+
 // Image Upload
- 
-$imagePath = "";
+
+$imagePath = "uploads/default.png";
 
 if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
 
@@ -72,6 +73,9 @@ if($size > 2000000){
 $errors[] = "Image must be less than 2MB";
 }
 
+// upload only if no errors
+if(empty($errors)){
+
 $newName = time().".".$ext;
 $path = "uploads/".$newName;
 
@@ -81,9 +85,9 @@ $imagePath = $path;
 
 }
 
+}
 
 // If Errors
-
 
 if(!empty($errors)){
 

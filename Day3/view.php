@@ -10,7 +10,10 @@ $stm->execute([$id]);
 
 $user = $stm->fetch(PDO::FETCH_ASSOC);
 
+$image = !empty($user['image']) ? $user['image'] : "uploads/default.png";
+
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,9 +26,12 @@ $user = $stm->fetch(PDO::FETCH_ASSOC);
 
 <div class="container mt-5">
 
-<div class="card p-4 shadow">
+<div class="card p-4 shadow text-center">
 
-<h4>User Details</h4>
+<h4 class="mb-4">User Details</h4>
+
+<img src="<?= $image ?>" width="120" height="120"
+style="object-fit:cover;border-radius:50%;margin-bottom:20px;">
 
 <p><b>Name:</b> <?= $user['fname'] . " " . $user['lname']; ?></p>
 
@@ -43,7 +49,7 @@ $user = $stm->fetch(PDO::FETCH_ASSOC);
 
 <p><b>Department:</b> <?= $user['department']; ?></p>
 
-<a href="users.php" class="btn btn-secondary">Back</a>
+<a href="users.php" class="btn btn-secondary mt-3">Back</a>
 
 </div>
 

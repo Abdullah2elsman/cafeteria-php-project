@@ -4,6 +4,9 @@ require("auth/auth.php");
 
 include "db.php";
 
+$db = new Database();
+$connection = $db->connect();
+
 $id = $_POST['id'];
 
 $fname = $_POST['fname'];

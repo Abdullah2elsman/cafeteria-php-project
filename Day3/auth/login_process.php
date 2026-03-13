@@ -3,6 +3,8 @@
 session_start();
 
 include "../db.php";
+$db = new Database();
+$connection = $db->connect();
 
 $username = $_POST['username'] ?? "";
 $password = $_POST['password'] ?? "";

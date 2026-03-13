@@ -1,23 +1,36 @@
 <?php
 
-$host = "127.0.0.1";
-$dbname = "php_lab";
-$username = "root";
-$password = "123456";
+class Database {
 
-try {
+    private $host = "127.0.0.1";
+    private $dbname = "php_lab";
+    private $username = "root";
+    private $password = "123456";
 
-$connection = new PDO(
-"mysql:host=$host;dbname=$dbname;charset=utf8",
-$username,
-$password
-);
+    public $connection;
 
-$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    public function connect(){
 
-} catch(PDOException $e) {
+        try{
 
-die($e->getMessage());
+            $this->connection = new PDO(
+                "mysql:host=".$this->host.";dbname=".$this->dbname.";charset=utf8",
+                $this->username,
+                $this->password
+            );
+
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            return $this->connection;
+
+        } catch(PDOException $e){
+
+            die($e->getMessage());
+
+        }
+
+    }
 
 }
+
 ?>

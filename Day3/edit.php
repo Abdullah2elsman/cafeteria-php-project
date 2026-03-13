@@ -4,6 +4,9 @@ require("auth/auth.php");
 
 include "db.php";
 
+$db = new Database();
+$connection = $db->connect();
+
 $id = $_GET['id'];
 
 $stm = $connection->prepare("SELECT * FROM users WHERE id=?");

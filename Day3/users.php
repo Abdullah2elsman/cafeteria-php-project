@@ -3,6 +3,9 @@
 require("auth/auth.php");
 include "db.php";
 
+$db = new Database();
+$connection = $db->connect();
+
 $result = $connection->query("SELECT * FROM users");
 
 ?>

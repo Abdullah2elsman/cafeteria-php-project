@@ -4,6 +4,9 @@
 //require("auth/auth.php");
 include "db.php";
 
+$db = new Database();
+$connection = $db->connect();
+
 $errors = [];
 
 // Get Form Data

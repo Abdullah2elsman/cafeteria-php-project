@@ -1,7 +1,11 @@
 <?php
 
 require("auth/auth.php");
+
 include "db.php";
+
+$db = new Database();
+$connection = $db->connect(); 
 
 if(!isset($_GET['id'])){
 header("Location: users.php");

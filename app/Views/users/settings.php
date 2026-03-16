@@ -195,42 +195,52 @@
             <div class="settings-card">
                 <h2>General Information</h2>
                 
-                <div class="avatar-upload">
-                    <img src="https://ui-avatars.com/api/?name=Abdullah+User&background=D4A373&color=fff" alt="User Avatar">
-                    <div>
-                        <button class="btn-outline" style="margin-bottom: 0.5rem; border-color:var(--color-primary); color:var(--color-primary);">Upload new image</button>
-                        <div style="color:var(--color-text-muted); font-size: 0.85rem;">Max file size: 2MB. JPG or PNG.</div>
-                    </div>
-                </div>
+                <?php flash('settings_message'); ?>
 
-                <form action="#">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" class="form-control" value="Abdullah">
+                <form action="<?php echo URL_ROOT; ?>/users/settings" method="POST" enctype="multipart/form-data">
+                    
+                    <div class="avatar-upload">
+                        <?php if(!empty($data['user']['profile_image'])): ?>
+                            <img src="<?php echo URL_ROOT . $data['user']['profile_image']; ?>" alt="User Avatar">
+                        <?php else: ?>
+                            <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($data['user']['name']); ?>&background=D4A373&color=fff" alt="User Avatar">
+                        <?php endif; ?>
+                        <div>
+                            <label for="profile_image" class="btn-outline" style="margin-bottom: 0.5rem; border-color:var(--color-primary); color:var(--color-primary); display:inline-block; cursor:pointer;">Upload new image</label>
+                            <input type="file" name="profile_image" id="profile_image" accept="image/jpeg,image/png" style="display:none;">
+                            <div style="color:var(--color-text-muted); font-size: 0.85rem;">Max file size: 2MB. JPG or PNG.</div>
+                            <?php if(!empty($data['errors']['image_err'])): ?>
+                                <small style="color: #dc3545; margin-top: 0.3rem;"><?php echo $data['errors']['image_err']; ?></small>
+                            <?php endif; ?>
                         </div>
-                        <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" class="form-control" value="User">
-                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label>Full Name</label>
+                        <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($data['user']['name']); ?>">
+                        <?php if(!empty($data['errors']['name_err'])): ?>
+                            <small style="color: #dc3545; margin-top: 0.3rem;"><?php echo $data['errors']['name_err']; ?></small>
+                        <?php endif; ?>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label>Email Address</label>
-                        <input type="email" class="form-control" value="abdullah@example.com">
+                        <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($data['user']['email']); ?>">
+                        <?php if(!empty($data['errors']['email_err'])): ?>
+                            <small style="color: #dc3545; margin-top: 0.3rem;"><?php echo $data['errors']['email_err']; ?></small>
+                        <?php endif; ?>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label>Phone Number</label>
-                        <input type="tel" class="form-control" value="+20 123 456 7890">
+                        <input type="tel" name="phone" class="form-control" value="<?php echo htmlspecialchars($data['user']['phone'] ?? ''); ?>">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label>Default Shipping Address</label>
-                        <textarea class="form-control" rows="3">123 Coffee Street, Downtown, City, 12345</textarea>
+                        <textarea class="form-control" name="address" rows="3"><?php echo htmlspecialchars($data['user']['address'] ?? ''); ?></textarea>
                     </div>
 
-                    <button type="button" class="btn-save">Save Changes</button>
+                    <button type="submit" class="btn-save">Save Changes</button>
                 </form>
             </div>
 

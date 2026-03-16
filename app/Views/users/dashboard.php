@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/PHP/cafeteria/public/css/dashboard.css">
 </head>
+
 <body>
 
     <!-- Sidebar Navigation -->
@@ -46,14 +48,14 @@
 
     <!-- Main Content Area -->
     <main class="main-content">
-        
+
         <!-- Header -->
         <header class="dashboard-header">
             <div class="welcome-msg">
                 <h1>Welcome back, Abdullah!</h1>
                 <p>Here's what's happening with your drinks today.</p>
             </div>
-            
+
             <div class="header-actions">
                 <a href="/PHP/cafeteria/public#menu" class="btn-new-order">
                     <i class="fa-solid fa-plus"></i> New Order
@@ -127,7 +129,9 @@
                                     </div>
                                 </div>
                             </td>
-                            <td><div class="order-date">Today, 09:30 AM</div></td>
+                            <td>
+                                <div class="order-date">Today, 09:30 AM</div>
+                            </td>
                             <td style="font-weight: 600;">$11.00</td>
                             <td><span class="status-badge status-processing">Processing</span></td>
                             <td><a href="#" class="action-btn"><i class="fa-solid fa-chevron-right"></i></a></td>
@@ -144,7 +148,9 @@
                                     </div>
                                 </div>
                             </td>
-                            <td><div class="order-date">Yesterday, 14:15 PM</div></td>
+                            <td>
+                                <div class="order-date">Yesterday, 14:15 PM</div>
+                            </td>
                             <td style="font-weight: 600;">$6.00</td>
                             <td><span class="status-badge status-completed">Completed</span></td>
                             <td><a href="#" class="action-btn"><i class="fa-solid fa-chevron-right"></i></a></td>
@@ -161,7 +167,9 @@
                                     </div>
                                 </div>
                             </td>
-                            <td><div class="order-date">Mar 12, 10:00 AM</div></td>
+                            <td>
+                                <div class="order-date">Mar 12, 10:00 AM</div>
+                            </td>
                             <td style="font-weight: 600;">$6.50</td>
                             <td><span class="status-badge status-cancelled">Cancelled</span></td>
                             <td><a href="#" class="action-btn"><i class="fa-solid fa-chevron-right"></i></a></td>
@@ -174,4 +182,5 @@
     </main>
 
 </body>
+
 </html>

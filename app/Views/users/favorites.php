@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Favorites | Sip & Savor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/PHP/cafeteria/public/css/dashboard.css">
+<?php require_once __DIR__ . '/../inc/header.php'; ?>
     <style>
         .favorites-grid {
             display: grid;
@@ -96,8 +89,6 @@
             background: var(--color-primary-dark);
         }
     </style>
-</head>
-<body>
 
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
@@ -189,5 +180,4 @@
 
     </main>
 
-</body>
-</html>
+<?php require_once __DIR__ . '/../inc/footer.php'; ?>

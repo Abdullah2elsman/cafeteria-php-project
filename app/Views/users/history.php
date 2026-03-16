@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase History | Sip & Savor</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/PHP/cafeteria/public/css/dashboard.css">
+<?php require_once __DIR__ . '/../inc/header.php'; ?>
     <style>
         .history-container {
             background: var(--color-surface);
@@ -92,8 +83,6 @@
             padding-bottom: 0;
         }
     </style>
-</head>
-<body>
 
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
@@ -221,5 +210,4 @@
 
     </main>
 
-</body>
-</html>
+<?php require_once __DIR__ . '/../inc/footer.php'; ?>

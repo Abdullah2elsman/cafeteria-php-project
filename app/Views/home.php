@@ -1,35 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafeteria | Premium Drinks eCommerce</title>
-    <!-- Add Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Link to custom CSS -->
-    <link rel="stylesheet" href="/PHP/cafeteria/public/css/home.css">
-</head>
-<body>
+<?php require_once __DIR__ . '/inc/header.php'; ?>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <a href="/PHP/cafeteria/public" class="nav-brand">Sip & Savor</a>
-        
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#menu">Menu</a></li>
-            <li><a href="#features">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-
-        <div class="nav-icons">
-            <a href="/PHP/cafeteria/public/auth/login" title="User Login"><i class="fa-regular fa-user"></i></a>
-            <div class="cart-icon">
-                <i class="fa-solid fa-bag-shopping"></i>
-                <span class="cart-count">3</span>
-            </div>
-        </div>
-    </nav>
+<?php require_once __DIR__ . '/inc/nav.php'; ?>
 
     <!-- Hero Section -->
     <header class="hero" id="home">
@@ -164,5 +135,4 @@
         <p>&copy; 2026 Sip & Savor Cafeteria. All rights reserved.</p>
     </footer>
 
-</body>
-</html>
+<?php require_once __DIR__ . '/inc/footer.php'; ?>

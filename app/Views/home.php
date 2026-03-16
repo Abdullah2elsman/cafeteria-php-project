@@ -42,79 +42,24 @@
         </div>
 
         <div class="products-grid">
-            <!-- Product 1 -->
+            <?php foreach($data['products'] as $product): ?>
             <div class="product-card">
-                <div class="product-badge">Best Seller</div>
                 <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&auto=format&fit=crop" alt="Caramel Macchiato">
+                    <img src="<?php echo $product['image_url']; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                 </div>
                 <div class="product-details">
-                    <div class="product-category">Coffee</div>
-                    <h3 class="product-title">Caramel Macchiato</h3>
-                    <p class="feature-desc" style="color:var(--color-text-muted); font-size: 0.95rem; line-height:1.4;">Rich espresso with vanilla syrup, organic milk, and buttery caramel drizzle.</p>
+                    <div class="product-category"><?php echo htmlspecialchars($product['categoryName']); ?></div>
+                    <h3 class="product-title"><?php echo htmlspecialchars($product['name']); ?></h3>
+                    <p class="feature-desc" style="color:var(--color-text-muted); font-size: 0.95rem; line-height:1.4;"><?php echo htmlspecialchars($product['description']); ?></p>
                     <div class="product-footer">
-                        <div class="product-price">$5.50</div>
+                        <div class="product-price">$<?php echo number_format($product['price'], 2); ?></div>
                         <button class="add-to-cart-btn" aria-label="Add to cart">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
                 </div>
             </div>
-
-            <!-- Product 2 -->
-            <div class="product-card">
-                <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?w=500&auto=format&fit=crop" alt="Matcha Latte">
-                </div>
-                <div class="product-details">
-                    <div class="product-category">Tea</div>
-                    <h3 class="product-title">Ceremonial Matcha</h3>
-                    <p class="feature-desc" style="color:var(--color-text-muted); font-size: 0.95rem; line-height:1.4;">Premium grade Japanese matcha whisked with your choice of plant-based milk.</p>
-                    <div class="product-footer">
-                        <div class="product-price">$6.00</div>
-                        <button class="add-to-cart-btn" aria-label="Add to cart">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product 3 -->
-            <div class="product-card">
-                <div class="product-badge" style="background:var(--color-primary);">New</div>
-                <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=500&auto=format&fit=crop" alt="Berry Smoothie">
-                </div>
-                <div class="product-details">
-                    <div class="product-category">Smoothie</div>
-                    <h3 class="product-title">Tropical Berry Glow</h3>
-                    <p class="feature-desc" style="color:var(--color-text-muted); font-size: 0.95rem; line-height:1.4;">Acai, mixed summer berries, banana, almond milk, and a touch of raw honey.</p>
-                    <div class="product-footer">
-                        <div class="product-price">$7.50</div>
-                        <button class="add-to-cart-btn" aria-label="Add to cart">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product 4 -->
-            <div class="product-card">
-                <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=500&auto=format&fit=crop" alt="Iced Latte">
-                </div>
-                <div class="product-details">
-                    <div class="product-category">Cold Coffee</div>
-                    <h3 class="product-title">Valencia Cold Brew</h3>
-                    <p class="feature-desc" style="color:var(--color-text-muted); font-size: 0.95rem; line-height:1.4;">18-hour cold steeped coffee, infused with dark chocolate notes and sweet cream.</p>
-                    <div class="product-footer">
-                        <div class="product-price">$6.50</div>
-                        <button class="add-to-cart-btn" aria-label="Add to cart">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </section>
 

@@ -1,6 +1,9 @@
 <?php
 
 class Users extends Controller {
+    private $orderModel;
+    private $userModel;
+
     public function __construct() {
         if (!isLoggedIn()) {
             flash('session_expired', 'Please log in to access this page', 'alert alert-error');
@@ -9,16 +12,26 @@ class Users extends Controller {
         }
 
         if ($_SESSION['user_role'] == 'admin') {
-            // Admin shouldn't access user dashboards/pages right now
             header('location: ' . URL_ROOT . '/admin/dashboard');
             exit;
         }
+
+        $this->orderModel = $this->model('Order');
+        $this->userModel = $this->model('User');
     }
 
     public function dashboard() {
+        $userId = $_SESSION['user_id'];
+        $user = $this->userModel->getUserById($userId);
+
         $data = [
             'title' => 'My Dashboard | Sip & Savor',
-            'css_file' => 'dashboard.css'
+            'css_file' => 'dashboard.css',
+            'user' => $user,
+            'total_orders' => $this->orderModel->getUserOrderCount($userId),
+            'total_spent' => $this->orderModel->getUserTotalSpent($userId),
+            'favorites_count' => $this->orderModel->getUserFavoritesCount($userId),
+            'recent_orders' => $this->orderModel->getRecentOrdersWithItems($userId, 5)
         ];
         $this->view('users/dashboard', $data);
     }

@@ -52,7 +52,7 @@
         <!-- Header -->
         <header class="dashboard-header">
             <div class="welcome-msg">
-                <h1>Welcome back, Abdullah!</h1>
+                <h1>Welcome back, <?php echo htmlspecialchars($data['user']['name']); ?>!</h1>
                 <p>Here's what's happening with your drinks today.</p>
             </div>
 
@@ -61,7 +61,7 @@
                     <i class="fa-solid fa-plus"></i> New Order
                 </a>
                 <div class="user-profile">
-                    <img src="https://ui-avatars.com/api/?name=Abdullah+User&background=D4A373&color=fff" alt="User Profile" class="avatar">
+                    <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($data['user']['name']); ?>&background=D4A373&color=fff" alt="User Profile" class="avatar">
                 </div>
             </div>
         </header>
@@ -73,7 +73,7 @@
                     <i class="fa-solid fa-mug-saucer"></i>
                 </div>
                 <div class="card-info">
-                    <h3>12</h3>
+                    <h3><?php echo $data['total_orders']; ?></h3>
                     <p>Total Orders</p>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                     <i class="fa-solid fa-wallet"></i>
                 </div>
                 <div class="card-info">
-                    <h3>$45.50</h3>
+                    <h3>$<?php echo number_format($data['total_spent'], 2); ?></h3>
                     <p>Total Spent</p>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                     <i class="fa-solid fa-star"></i>
                 </div>
                 <div class="card-info">
-                    <h3>3</h3>
+                    <h3><?php echo $data['favorites_count']; ?></h3>
                     <p>Favorites</p>
                 </div>
             </div>
@@ -118,62 +118,37 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Order Row 1 -->
-                        <tr>
-                            <td>
-                                <div class="order-items">
-                                    <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=100&h=100&auto=format&fit=crop" class="order-img" alt="Drink">
-                                    <div>
-                                        <div class="order-name">Caramel Macchiato x2</div>
-                                        <div style="color: var(--color-text-muted); font-size: 0.85rem;">Order #ORD-8439</div>
+                        <?php if (empty($data['recent_orders'])): ?>
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--color-text-muted);">
+                                    No orders yet. <a href="<?php echo URL_ROOT; ?>#menu">Explore the menu</a> to place your first order!
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach($data['recent_orders'] as $order): ?>
+                            <tr>
+                                <td>
+                                    <div class="order-items">
+                                        <img src="<?php echo $order['image_url']; ?>" class="order-img" alt="<?php echo htmlspecialchars($order['product_name']); ?>">
+                                        <div>
+                                            <div class="order-name"><?php echo htmlspecialchars($order['product_name']); ?> x<?php echo $order['quantity']; ?></div>
+                                            <div style="color: var(--color-text-muted); font-size: 0.85rem;">Order #ORD-<?php echo str_pad($order['id'], 4, '0', STR_PAD_LEFT); ?></div>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="order-date">Today, 09:30 AM</div>
-                            </td>
-                            <td style="font-weight: 600;">$11.00</td>
-                            <td><span class="status-badge status-processing">Processing</span></td>
-                            <td><a href="#" class="action-btn"><i class="fa-solid fa-chevron-right"></i></a></td>
-                        </tr>
-
-                        <!-- Order Row 2 -->
-                        <tr>
-                            <td>
-                                <div class="order-items">
-                                    <img src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?w=100&h=100&auto=format&fit=crop" class="order-img" alt="Drink">
-                                    <div>
-                                        <div class="order-name">Ceremonial Matcha</div>
-                                        <div style="color: var(--color-text-muted); font-size: 0.85rem;">Order #ORD-7214</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="order-date">Yesterday, 14:15 PM</div>
-                            </td>
-                            <td style="font-weight: 600;">$6.00</td>
-                            <td><span class="status-badge status-completed">Completed</span></td>
-                            <td><a href="#" class="action-btn"><i class="fa-solid fa-chevron-right"></i></a></td>
-                        </tr>
-
-                        <!-- Order Row 3 -->
-                        <tr>
-                            <td>
-                                <div class="order-items">
-                                    <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=100&h=100&auto=format&fit=crop" class="order-img" alt="Drink">
-                                    <div>
-                                        <div class="order-name">Valencia Cold Brew</div>
-                                        <div style="color: var(--color-text-muted); font-size: 0.85rem;">Order #ORD-6621</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="order-date">Mar 12, 10:00 AM</div>
-                            </td>
-                            <td style="font-weight: 600;">$6.50</td>
-                            <td><span class="status-badge status-cancelled">Cancelled</span></td>
-                            <td><a href="#" class="action-btn"><i class="fa-solid fa-chevron-right"></i></a></td>
-                        </tr>
+                                </td>
+                                <td>
+                                    <div class="order-date"><?php echo date('M j, Y h:i A', strtotime($order['created_at'])); ?></div>
+                                </td>
+                                <td style="font-weight: 600;">$<?php echo number_format($order['total_amount'], 2); ?></td>
+                                <td>
+                                    <span class="status-badge status-<?php echo $order['status']; ?>">
+                                        <?php echo ucfirst($order['status']); ?>
+                                    </span>
+                                </td>
+                                <td><a href="#" class="action-btn"><i class="fa-solid fa-chevron-right"></i></a></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

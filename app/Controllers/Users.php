@@ -11,14 +11,18 @@ class Users extends Controller {
             exit;
         }
 
-        if ($_SESSION['user_role'] == 'admin') {
-            header('location: ' . URL_ROOT . '/admin/dashboard');
-            exit;
-        }
-
         $this->orderModel = $this->model('Order');
         $this->userModel = $this->model('User');
     }
+
+    private function requireAdmin() {
+        if ($_SESSION['user_role'] != 'admin') {
+            header('location: ' . URL_ROOT . '/users/dashboard');
+            exit;
+        }
+    }
+
+    // ─── Regular User Methods ───
 
     public function dashboard() {
         $userId = $_SESSION['user_id'];
@@ -169,5 +173,237 @@ class Users extends Controller {
             ];
             $this->view('users/settings', $data);
         }
+    }
+
+    // ─── Admin User Management Methods ───
+
+    public function index()
+    {
+        $this->requireAdmin();
+        $users = $this->userModel->getAllUsers();
+
+        $data = [
+            'title' => 'User Management',
+            'css_file' => 'dashboard.css',
+            'active_nav' => 'users',
+            'users' => $users
+        ];
+
+        $this->view('admin/users/index', $data);
+    }
+
+    public function add()
+    {
+        $this->requireAdmin();
+        $data = [
+            'title' => 'Add User',
+            'css_file' => 'dashboard.css',
+            'active_nav' => 'users',
+            'name' => '',
+            'email' => '',
+            'password' => '',
+            'room_no' => '',
+            'ext' => '',
+            'errors' => []
+        ];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data['name'] = trim((string)($_POST['name'] ?? ''));
+            $data['email'] = trim((string)($_POST['email'] ?? ''));
+            $data['password'] = trim((string)($_POST['password'] ?? ''));
+            $data['room_no'] = trim((string)($_POST['room_no'] ?? ''));
+            $data['ext'] = trim((string)($_POST['ext'] ?? ''));
+
+            // Validations
+            if (empty($data['name'])) {
+                $data['errors']['name'] = 'Name is required.';
+            }
+            if (empty($data['email'])) {
+                $data['errors']['email'] = 'Email is required.';
+            } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $data['errors']['email'] = 'Valid email is required.';
+            } elseif ($this->userModel->findUserByEmail($data['email'])) {
+                $data['errors']['email'] = 'Email is already taken.';
+            }
+            if (empty($data['password'])) {
+                $data['errors']['password'] = 'Password is required.';
+            } elseif (strlen($data['password']) < 6) {
+                $data['errors']['password'] = 'Password must be at least 6 characters.';
+            }
+            if (empty($data['room_no'])) {
+                $data['errors']['room_no'] = 'Room number is required.';
+            }
+            if (empty($data['ext'])) {
+                $data['errors']['ext'] = 'Extension is required.';
+            }
+
+            // Image Upload
+            $imageUrl = null;
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+                $imageUrl = $this->handleImageUpload('profile_image');
+                if ($imageUrl === false) {
+                    $data['errors']['image'] = 'Image upload failed. Allowed: jpg, png, jpeg. Max: 2MB.';
+                }
+            }
+
+            if (empty($data['errors'])) {
+                $payload = [
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'password' => $data['password'],
+                    'room_no' => $data['room_no'],
+                    'ext' => $data['ext'],
+                    'profile_image' => $imageUrl
+                ];
+
+                if ($this->userModel->addSystemUser($payload)) {
+                    flash('user_success', 'User added successfully', 'alert alert-success');
+                    header('Location: ' . URL_ROOT . '/users/index');
+                    exit;
+                } else {
+                    flash('user_error', 'Something went wrong while adding the user', 'alert alert-danger');
+                }
+            }
+        }
+
+        $this->view('admin/users/add', $data);
+    }
+
+    public function edit($id = null)
+    {
+        $this->requireAdmin();
+        if (!$id) {
+            header('Location: ' . URL_ROOT . '/users/index');
+            exit;
+        }
+
+        $user = $this->userModel->getUserById($id);
+        if (!$user) {
+            header('Location: ' . URL_ROOT . '/users/index');
+            exit;
+        }
+
+        $data = [
+            'title' => 'Edit User',
+            'css_file' => 'dashboard.css',
+            'active_nav' => 'users',
+            'id' => $user['id'],
+            'name' => $user['name'],
+            'email' => $user['email'],
+            'password' => '', // leave blank unless changing
+            'room_no' => $user['room_no'],
+            'ext' => $user['ext'],
+            'profile_image' => $user['profile_image'],
+            'errors' => []
+        ];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data['name'] = trim((string)($_POST['name'] ?? ''));
+            $data['email'] = trim((string)($_POST['email'] ?? ''));
+            $data['password'] = trim((string)($_POST['password'] ?? ''));
+            $data['room_no'] = trim((string)($_POST['room_no'] ?? ''));
+            $data['ext'] = trim((string)($_POST['ext'] ?? ''));
+
+            // Validations
+            if (empty($data['name'])) {
+                $data['errors']['name'] = 'Name is required.';
+            }
+            if (empty($data['email'])) {
+                $data['errors']['email'] = 'Email is required.';
+            } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $data['errors']['email'] = 'Valid email is required.';
+            } elseif ($this->userModel->findUserByEmailExcept($data['email'], $id)) {
+                $data['errors']['email'] = 'Email is already taken by another user.';
+            }
+            
+            if (!empty($data['password']) && strlen($data['password']) < 6) {
+                $data['errors']['password'] = 'Password must be at least 6 characters.';
+            }
+            
+            if (empty($data['room_no'])) {
+                $data['errors']['room_no'] = 'Room number is required.';
+            }
+            if (empty($data['ext'])) {
+                $data['errors']['ext'] = 'Extension is required.';
+            }
+
+            // Image Upload
+            $imageUrl = $user['profile_image']; // assume existing by default
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+                $newImageUrl = $this->handleImageUpload('profile_image');
+                if ($newImageUrl === false) {
+                    $data['errors']['image'] = 'Image upload failed. Allowed: jpg, png, jpeg. Max: 2MB.';
+                } else {
+                    $imageUrl = $newImageUrl;
+                }
+            }
+
+            if (empty($data['errors'])) {
+                $payload = [
+                    'id' => $id,
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'password' => $data['password'],
+                    'room_no' => $data['room_no'],
+                    'ext' => $data['ext'],
+                    'profile_image' => $imageUrl
+                ];
+
+                if ($this->userModel->updateSystemUser($payload)) {
+                    flash('user_success', 'User updated successfully', 'alert alert-success');
+                    header('Location: ' . URL_ROOT . '/users/index');
+                    exit;
+                } else {
+                    flash('user_error', 'Something went wrong while updating the user', 'alert alert-danger');
+                }
+            }
+        }
+
+        $this->view('admin/users/edit', $data);
+    }
+
+    public function delete($id)
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->userModel->deleteUser($id)) {
+                flash('user_success', 'User deleted successfully', 'alert alert-success');
+            } else {
+                flash('user_error', 'Failed to delete user', 'alert alert-danger');
+            }
+        }
+        header('Location: ' . URL_ROOT . '/users/index');
+        exit;
+    }
+
+    private function handleImageUpload($inputName)
+    {
+        $file = $_FILES[$inputName];
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        $maxSize = 2 * 1024 * 1024; // 2MB
+
+        if (!in_array($file['type'], $allowedTypes)) {
+            return false;
+        }
+
+        if ($file['size'] > $maxSize) {
+            return false;
+        }
+
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = uniqid('profile_') . '.' . $ext;
+        $uploadDir = dirname(dirname(__DIR__)) . '/public/img/profiles/';
+
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $uploadPath = $uploadDir . $filename;
+
+        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+            return 'img/profiles/' . $filename;
+        }
+
+        return false;
     }
 }

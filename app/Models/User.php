@@ -118,4 +118,58 @@ class User
 
         return $this->db->execute();
     }
+
+    // ---------------------------------------------------------
+    // Admin User Management Methods
+    // ---------------------------------------------------------
+
+    // Get all users
+    public function getAllUsers()
+    {
+        $this->db->query('SELECT * FROM users ORDER BY created_at DESC');
+        return $this->db->resultSet();
+    }
+
+    // Add a new system user
+    public function addSystemUser($data)
+    {
+        $this->db->query('INSERT INTO users (name, email, password, room_no, ext, profile_image) VALUES (:name, :email, :password, :room_no, :ext, :profile_image)');
+        $this->db->bind(':name', $data['name']);
+        $this->db->bind(':email', $data['email']);
+        $this->db->bind(':password', password_hash($data['password'], PASSWORD_DEFAULT));
+        $this->db->bind(':room_no', $data['room_no']);
+        $this->db->bind(':ext', $data['ext']);
+        $this->db->bind(':profile_image', $data['profile_image']);
+
+        return $this->db->execute();
+    }
+
+    // Update system user details
+    public function updateSystemUser($data)
+    {
+        // If password is provided, update it too
+        if (!empty($data['password'])) {
+            $this->db->query('UPDATE users SET name = :name, email = :email, room_no = :room_no, ext = :ext, profile_image = :profile_image, password = :password WHERE id = :id');
+            $this->db->bind(':password', password_hash($data['password'], PASSWORD_DEFAULT));
+        } else {
+            $this->db->query('UPDATE users SET name = :name, email = :email, room_no = :room_no, ext = :ext, profile_image = :profile_image WHERE id = :id');
+        }
+
+        $this->db->bind(':name', $data['name']);
+        $this->db->bind(':email', $data['email']);
+        $this->db->bind(':room_no', $data['room_no']);
+        $this->db->bind(':ext', $data['ext']);
+        $this->db->bind(':profile_image', $data['profile_image']);
+        $this->db->bind(':id', $data['id']);
+
+        return $this->db->execute();
+    }
+
+    // Delete a user
+    public function deleteUser($id)
+    {
+        $this->db->query('DELETE FROM users WHERE id = :id');
+        $this->db->bind(':id', $id);
+        return $this->db->execute();
+    }
 }

@@ -25,7 +25,7 @@
             <a href="/PHP/cafeteria/public/users/dashboard" class="nav-item active">
                 <i class="fa-solid fa-border-all"></i> Dashboard
             </a>
-            <a href="/PHP/cafeteria/public/users/orders" class="nav-item">
+            <a href="<?php echo URL_ROOT; ?>/orders" class="nav-item">
                 <i class="fa-solid fa-receipt"></i> Orders
             </a>
             <a href="/PHP/cafeteria/public/users/favorites" class="nav-item">
@@ -57,7 +57,7 @@
             </div>
 
             <div class="header-actions">
-                <a href="/PHP/cafeteria/public#menu" class="btn-new-order">
+                <a href="<?php echo URL_ROOT; ?>/orders/create" class="btn-new-order">
                     <i class="fa-solid fa-plus"></i> New Order
                 </a>
                 <div class="user-profile">
@@ -103,7 +103,7 @@
         <section class="recent-orders">
             <div class="section-header">
                 <h2>Recent Orders</h2>
-                <a href="/PHP/cafeteria/public/users/orders" class="view-all">View All</a>
+                <a href="<?php echo URL_ROOT; ?>/orders" class="view-all">View All</a>
             </div>
 
             <div class="table-responsive">

@@ -335,6 +335,21 @@ tr:last-child td {
     color: #e07400;
 }
 
+.status-pending {
+    background: rgba(69, 123, 157, 0.16);
+    color: #2a5d7f;
+}
+
+.status-out-for-delivery {
+    background: rgba(255, 196, 0, 0.2);
+    color: #997300;
+}
+
+.status-done {
+    background: rgba(123, 144, 75, 0.15);
+    color: var(--color-accent);
+}
+
 .status-completed {
     background: rgba(123, 144, 75, 0.15);
     color: var(--color-accent);

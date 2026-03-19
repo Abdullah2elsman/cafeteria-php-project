@@ -57,7 +57,7 @@
             </div>
 
             <div class="header-actions">
-                <a href="/PHP/cafeteria/public#menu" class="btn-new-order">
+                <a href="<?php echo URL_ROOT; ?>/orders/create" class="btn-new-order">
                     <i class="fa-solid fa-plus"></i> New Order
                 </a>
                 <div class="user-profile">

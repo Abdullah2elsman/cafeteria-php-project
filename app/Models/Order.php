@@ -46,4 +46,89 @@ class Order {
         $this->db->bind(':limit', (int)$limit);
         return $this->db->resultSet();
     }
+
+    public function getAvailableProducts() {
+        $this->db->query("SELECT p.id, p.name, p.price, p.image_url, c.name as category_name
+                          FROM products p
+                          LEFT JOIN categories c ON p.category_id = c.id
+                          WHERE p.is_available = 1
+                          ORDER BY p.name ASC");
+        return $this->db->resultSet();
+    }
+
+    public function createOrderWithItems($userId, $room, $notes, $items) {
+        if (empty($items)) {
+            return false;
+        }
+
+        $totalAmount = 0.0;
+        $pricedItems = [];
+
+        foreach ($items as $item) {
+            if (empty($item['product_id']) || empty($item['quantity']) || $item['quantity'] < 1) {
+                continue;
+            }
+
+            $this->db->query("SELECT id, price FROM products WHERE id = :id AND is_available = 1");
+            $this->db->bind(':id', (int)$item['product_id']);
+            $product = $this->db->single();
+
+            if (!$product) {
+                continue;
+            }
+
+            $lineTotal = ((float)$product['price']) * ((int)$item['quantity']);
+            $totalAmount += $lineTotal;
+
+            $pricedItems[] = [
+                'product_id' => (int)$product['id'],
+                'quantity' => (int)$item['quantity'],
+                'price' => (float)$product['price']
+            ];
+        }
+
+        if (empty($pricedItems)) {
+            return false;
+        }
+
+        try {
+            $this->db->beginTransaction();
+
+            $this->db->query("INSERT INTO orders (user_id, total_amount, status, shipping_address)
+                              VALUES (:user_id, :total_amount, 'pending', :shipping_address)");
+            $this->db->bind(':user_id', (int)$userId);
+            $this->db->bind(':total_amount', $totalAmount);
+            $this->db->bind(':shipping_address', $this->buildDeliveryInfo($room, $notes));
+            $this->db->execute();
+
+            $orderId = (int)$this->db->lastInsertId();
+
+            foreach ($pricedItems as $item) {
+                $this->db->query("INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
+                                  VALUES (:order_id, :product_id, :quantity, :price_at_time)");
+                $this->db->bind(':order_id', $orderId);
+                $this->db->bind(':product_id', $item['product_id']);
+                $this->db->bind(':quantity', $item['quantity']);
+                $this->db->bind(':price_at_time', $item['price']);
+                $this->db->execute();
+            }
+
+            $this->db->commit();
+            return $orderId;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return false;
+        }
+    }
+
+    private function buildDeliveryInfo($room, $notes) {
+        $cleanRoom = trim((string)$room);
+        $cleanNotes = trim((string)$notes);
+
+        if ($cleanNotes === '') {
+            $cleanNotes = 'None';
+        }
+
+        return "Room: {$cleanRoom}\nNotes: {$cleanNotes}";
+    }
 }

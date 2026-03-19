@@ -150,7 +150,7 @@
             <a href="<?php echo URL_ROOT; ?>/orders/create" class="nav-item active">
                 <i class="fa-solid fa-cart-shopping"></i> Create Order
             </a>
-            <a href="<?php echo URL_ROOT; ?>/users/orders" class="nav-item">
+            <a href="<?php echo URL_ROOT; ?>/orders" class="nav-item">
                 <i class="fa-solid fa-receipt"></i> My Orders
             </a>
             <a href="<?php echo URL_ROOT; ?>/users/settings" class="nav-item">

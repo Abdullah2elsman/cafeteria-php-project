@@ -19,8 +19,24 @@ class Orders extends Controller {
     }
 
     public function index($params = []) {
-        header('location: ' . URL_ROOT . '/orders/create');
-        exit;
+        $dateFrom = isset($_GET['date_from']) ? trim($_GET['date_from']) : '';
+        $dateTo = isset($_GET['date_to']) ? trim($_GET['date_to']) : '';
+        $orders = $this->orderModel->getOrdersWithItemsByUser((int)$_SESSION['user_id'], $dateFrom, $dateTo);
+
+        foreach ($orders as &$order) {
+            $order['status_meta'] = $this->statusMeta($order['status']);
+        }
+        unset($order);
+
+        $data = [
+            'title' => 'My Orders | Sip & Savor',
+            'css_file' => 'dashboard.css',
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+            'orders' => $orders
+        ];
+
+        $this->view('orders/index', $data);
     }
 
     public function create($params = []) {
@@ -74,12 +90,57 @@ class Orders extends Controller {
         if ($orderId) {
             unset($_SESSION['order_cart']);
             flash('order_message', 'Order #' . $orderId . ' has been confirmed successfully.');
-            header('location: ' . URL_ROOT . '/orders/create');
+            header('location: ' . URL_ROOT . '/orders');
             exit;
         }
 
         flash('order_message', 'Something went wrong while confirming your order.', 'alert alert-error');
         header('location: ' . URL_ROOT . '/orders/create');
         exit;
+    }
+
+    public function cancel($params = []) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('location: ' . URL_ROOT . '/orders');
+            exit;
+        }
+
+        $orderId = isset($params[0]) ? (int)$params[0] : 0;
+        if ($orderId < 1) {
+            flash('order_message', 'Invalid order.', 'alert alert-error');
+            header('location: ' . URL_ROOT . '/orders');
+            exit;
+        }
+
+        $cancelled = $this->orderModel->cancelPendingOrder($orderId, (int)$_SESSION['user_id']);
+
+        if ($cancelled) {
+            flash('order_message', 'Order has been cancelled successfully.');
+        } else {
+            flash('order_message', 'Only pending orders can be cancelled.', 'alert alert-error');
+        }
+
+        header('location: ' . URL_ROOT . '/orders');
+        exit;
+    }
+
+    private function statusMeta($status) {
+        $normalized = strtolower((string)$status);
+
+        switch ($normalized) {
+            case 'processing':
+                return ['label' => 'Processing', 'class' => 'status-processing'];
+            case 'out_for_delivery':
+                return ['label' => 'Out for delivery', 'class' => 'status-out-for-delivery'];
+            case 'done':
+                return ['label' => 'Done', 'class' => 'status-done'];
+            case 'completed':
+                return ['label' => 'Done', 'class' => 'status-done'];
+            case 'cancelled':
+                return ['label' => 'Cancelled', 'class' => 'status-cancelled'];
+            case 'pending':
+            default:
+                return ['label' => 'Pending', 'class' => 'status-pending'];
+        }
     }
 }

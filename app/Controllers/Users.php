@@ -37,11 +37,8 @@ class Users extends Controller {
     }
 
     public function orders() {
-        $data = [
-            'title' => 'My Orders | Sip & Savor',
-            'css_file' => 'dashboard.css'
-        ];
-        $this->view('users/orders', $data);
+        header('location: ' . URL_ROOT . '/orders');
+        exit;
     }
 
     public function favorites() {

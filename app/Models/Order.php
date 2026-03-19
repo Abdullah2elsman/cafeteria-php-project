@@ -121,6 +121,75 @@ class Order {
         }
     }
 
+    public function getOrdersWithItemsByUser($userId, $dateFrom = '', $dateTo = '') {
+        $sql = "SELECT id, user_id, total_amount, status, shipping_address, created_at
+                FROM orders
+                WHERE user_id = :user_id";
+
+        if ($dateFrom !== '') {
+            $sql .= " AND DATE(created_at) >= :date_from";
+        }
+        if ($dateTo !== '') {
+            $sql .= " AND DATE(created_at) <= :date_to";
+        }
+
+        $sql .= " ORDER BY created_at DESC";
+
+        $this->db->query($sql);
+        $this->db->bind(':user_id', (int)$userId);
+        if ($dateFrom !== '') {
+            $this->db->bind(':date_from', $dateFrom);
+        }
+        if ($dateTo !== '') {
+            $this->db->bind(':date_to', $dateTo);
+        }
+
+        $orders = $this->db->resultSet();
+        if (empty($orders)) {
+            return [];
+        }
+
+        $orderIds = array_map(function ($order) {
+            return (int)$order['id'];
+        }, $orders);
+
+        $items = $this->getItemsForOrders($orderIds);
+        $itemsByOrder = [];
+        foreach ($items as $item) {
+            $orderId = (int)$item['order_id'];
+            if (!isset($itemsByOrder[$orderId])) {
+                $itemsByOrder[$orderId] = [];
+            }
+            $itemsByOrder[$orderId][] = $item;
+        }
+
+        foreach ($orders as &$order) {
+            $delivery = $this->parseDeliveryInfo($order['shipping_address']);
+            $order['room'] = $delivery['room'];
+            $order['notes'] = $delivery['notes'];
+            $order['items'] = isset($itemsByOrder[(int)$order['id']]) ? $itemsByOrder[(int)$order['id']] : [];
+        }
+        unset($order);
+
+        return $orders;
+    }
+
+    public function cancelPendingOrder($orderId, $userId) {
+        $this->db->query("UPDATE orders
+                          SET status = 'cancelled'
+                          WHERE id = :order_id
+                            AND user_id = :user_id
+                            AND status = 'pending'");
+        $this->db->bind(':order_id', (int)$orderId);
+        $this->db->bind(':user_id', (int)$userId);
+
+        if (!$this->db->execute()) {
+            return false;
+        }
+
+        return $this->db->rowCount() > 0;
+    }
+
     private function buildDeliveryInfo($room, $notes) {
         $cleanRoom = trim((string)$room);
         $cleanNotes = trim((string)$notes);
@@ -130,5 +199,46 @@ class Order {
         }
 
         return "Room: {$cleanRoom}\nNotes: {$cleanNotes}";
+    }
+
+    private function getItemsForOrders($orderIds) {
+        if (empty($orderIds)) {
+            return [];
+        }
+
+        $placeholders = [];
+        foreach ($orderIds as $idx => $orderId) {
+            $placeholders[] = ':order_id_' . $idx;
+        }
+
+        $this->db->query("SELECT oi.order_id, oi.product_id, oi.quantity, oi.price_at_time,
+                                 p.name as product_name, p.image_url
+                          FROM order_items oi
+                          JOIN products p ON p.id = oi.product_id
+                          WHERE oi.order_id IN (" . implode(', ', $placeholders) . ")
+                          ORDER BY oi.id ASC");
+
+        foreach ($orderIds as $idx => $orderId) {
+            $this->db->bind(':order_id_' . $idx, (int)$orderId);
+        }
+
+        return $this->db->resultSet();
+    }
+
+    private function parseDeliveryInfo($shippingAddress) {
+        $room = trim((string)$shippingAddress);
+        $notes = 'None';
+
+        if (preg_match('/Room:\s*(.*)/i', (string)$shippingAddress, $roomMatch)) {
+            $room = trim($roomMatch[1]);
+        }
+        if (preg_match('/Notes:\s*(.*)/i', (string)$shippingAddress, $notesMatch)) {
+            $notes = trim($notesMatch[1]);
+        }
+
+        return [
+            'room' => $room === '' ? 'N/A' : $room,
+            'notes' => $notes === '' ? 'None' : $notes
+        ];
     }
 }

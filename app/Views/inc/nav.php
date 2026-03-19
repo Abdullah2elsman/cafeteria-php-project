@@ -12,10 +12,6 @@
     <div class="nav-icons">
         <?php if(!isset($data['hide_nav']) || !$data['hide_nav']): ?>
             <a href="<?php echo URL_ROOT; ?>/auth/login" title="User Login"><i class="fa-regular fa-user"></i></a>
-            <div class="cart-icon">
-                <i class="fa-solid fa-bag-shopping"></i>
-                <span class="cart-count">3</span>
-            </div>
         <?php endif; ?>
     </div>
 </nav>

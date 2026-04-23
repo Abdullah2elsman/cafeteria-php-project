@@ -4,8 +4,16 @@ class Products extends Controller
 {
     private Product $productModel;
 
+    private function requireAdmin() {
+        if (!function_exists('isLoggedIn') || !isLoggedIn() || !isset($_SESSION['user_role']) || $_SESSION['user_role'] != 'admin') {
+            header('location: ' . URL_ROOT . '/auth/login');
+            exit;
+        }
+    }
+
     public function __construct()
     {
+        $this->requireAdmin();
         $this->productModel = $this->model('Product');
     }
 

@@ -1,7 +1,42 @@
-<?php require APPROOT . '/Views/inc/header.php'; ?>
-<?php require APPROOT . '/Views/inc/nav.php'; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $data['title'] ?? 'Users Management'; ?> | Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/css/dashboard.css">
+</head>
+<body>
 
-<main class="admin-main-content">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="<?php echo URL_ROOT; ?>" class="sidebar-brand">
+                <i class="fa-solid fa-mug-hot"></i> Admin Panel
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="<?php echo URL_ROOT; ?>/admin/dashboard" class="nav-item">
+                <i class="fa-solid fa-border-all"></i> Dashboard
+            </a>
+            <a href="<?php echo URL_ROOT; ?>/admin/prducts" class="nav-item">
+                <i class="fa-solid fa-box"></i> Products
+            </a>
+            <a href="<?php echo URL_ROOT; ?>/admin/users" class="nav-item active">
+                <i class="fa-solid fa-users"></i> Users
+            </a>
+            <a href="<?php echo URL_ROOT; ?>/admin/checks" class="nav-item">
+                <i class="fa-solid fa-wallet"></i> Checks
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="<?php echo URL_ROOT; ?>/auth/logout" class="logout-btn">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+<main class="main-content">
     <div class="container mt-4 products-page">
         <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
@@ -22,12 +57,11 @@
                     <div class="product-premium-card">
                         <div class="product-card-image" style="height: 180px;">
                             <?php if (!empty($u['profile_image'])) : ?>
-                                <img src="<?php echo URL_ROOT . '/' . $u['profile_image']; ?>"
+                                <img src="<?php echo strpos($u['profile_image'], 'http') === 0 ? $u['profile_image'] : URL_ROOT . '/' . $u['profile_image']; ?>"
                                      alt="<?php echo htmlspecialchars($u['name']); ?>" style="object-position: center; object-fit: cover;">
                             <?php else : ?>
-                                <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
-                                    <i class="fa-solid fa-user fa-3x"></i>
-                                </div>
+                                <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($u['name']); ?>&background=random&color=fff&size=200"
+                                     alt="<?php echo htmlspecialchars($u['name']); ?>" style="object-position: center; object-fit: cover; width: 100%; height: 100%;">
                             <?php endif; ?>
                             
                             <div class="product-card-badge" style="background: <?php echo $u['role'] === 'admin' ? 'rgba(255,193,7,0.85)' : 'rgba(255,255,255,0.85)'; ?>;">
@@ -38,10 +72,10 @@
                         <div class="product-card-content">
                             <span class="product-card-category"><?php echo htmlspecialchars($u['email']); ?></span>
                             <h3 class="product-card-name"><?php echo htmlspecialchars($u['name']); ?></h3>
-                            <p class="product-card-desc mb-1" style="display: block; -webkit-line-clamp: unset;">
+                            <p class="product-card-desc mb-1" style="display: block; -webkit-line-clamp: unset; line-clamp: unset;">
                                 <i class="fa-solid fa-door-open me-2 text-muted"></i> Room: <?php echo htmlspecialchars($u['room_no'] ?? 'N/A'); ?>
                             </p>
-                            <p class="product-card-desc mb-0" style="display: block; -webkit-line-clamp: unset;">
+                            <p class="product-card-desc mb-0" style="display: block; -webkit-line-clamp: unset; line-clamp: unset;">
                                 <i class="fa-solid fa-phone me-2 text-muted"></i> Ext: <?php echo htmlspecialchars($u['ext'] ?? 'N/A'); ?>
                             </p>
                         </div>
@@ -56,9 +90,9 @@
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 
-                                <form action="<?php echo URL_ROOT; ?>/users/delete/<?php echo $u['id']; ?>" method="POST" 
+                                <form style="margin: 0; padding: 0; display: inline-flex;" action="<?php echo URL_ROOT; ?>/users/delete/<?php echo $u['id']; ?>" method="POST" 
                                       onsubmit="return confirm('Securely delete this user?')">
-                                    <button type="submit" class="btn-icon btn-delete-icon" title="Delete User">
+                                    <button type="submit" class="btn-icon btn-delete-icon" title="Delete User" style="border: none; background: transparent;">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>
@@ -77,4 +111,5 @@
     </div>
 </main>
 
-<?php require APPROOT . '/Views/inc/footer.php'; ?>
+</body>
+</html>

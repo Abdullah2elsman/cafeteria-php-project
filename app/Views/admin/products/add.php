@@ -1,12 +1,57 @@
-<?php require APPROOT . '/Views/inc/header.php'; ?>
-<?php require APPROOT . '/Views/inc/nav.php'; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $data['title'] ?? 'Add Product'; ?> | Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/css/dashboard.css">
+</head>
+<body>
 
-<main class="admin-main-content">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="<?php echo URL_ROOT; ?>" class="sidebar-brand">
+                <i class="fa-solid fa-mug-hot"></i> Admin Panel
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="<?php echo URL_ROOT; ?>/admin/dashboard" class="nav-item">
+                <i class="fa-solid fa-border-all"></i> Dashboard
+            </a>
+            <a href="<?php echo URL_ROOT; ?>/admin/prducts" class="nav-item active">
+                <i class="fa-solid fa-box"></i> Products
+            </a>
+            <a href="<?php echo URL_ROOT; ?>/admin/users" class="nav-item">
+                <i class="fa-solid fa-users"></i> Users
+            </a>
+            <a href="<?php echo URL_ROOT; ?>/admin/checks" class="nav-item">
+                <i class="fa-solid fa-wallet"></i> Checks
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="<?php echo URL_ROOT; ?>/auth/logout" class="logout-btn">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+<main class="main-content">
+    <header class="dashboard-header">
+        <div class="welcome-msg">
+            <h1>Add New Product</h1>
+        </div>
+        <div class="header-actions">
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=D4A373&color=fff" alt="Profile" class="avatar">
+            </div>
+        </div>
+    </header>
     <div class="container py-5 product-form-page">
         <div class="premium-form-container">
             <h2 class="product-card-name text-center mb-5" style="font-size: 2.5rem;">Create New Product</h2>
             
-            <form action="<?php echo URL_ROOT; ?>/product/add" method="POST" enctype="multipart/form-data">
+            <form action="<?php echo URL_ROOT; ?>/products/add" method="POST" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group-premium">
@@ -68,7 +113,7 @@
                 </div>
 
                 <div class="d-flex gap-3 mt-5">
-                    <a href="<?php echo URL_ROOT; ?>/product" class="btn btn-outline-secondary w-50" style="border-radius: 20px; padding: 1.2rem; border-width: 2px;">Cancel</a>
+                    <a href="<?php echo URL_ROOT; ?>/products" class="btn btn-outline-secondary w-50" style="border-radius: 20px; padding: 1.2rem; border-width: 2px;">Cancel</a>
                     <button type="submit" class="btn btn-premium-submit w-50">Create Product</button>
                 </div>
             </form>
@@ -91,4 +136,5 @@ function previewImage(input) {
 }
 </script>
 
-<?php require APPROOT . '/Views/inc/footer.php'; ?>
+</body>
+</html>

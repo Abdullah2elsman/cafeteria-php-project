@@ -52,4 +52,4 @@ $params = $url ? array_values($url) : [];
 
 
 // RUN
-call_user_func([$currentController, $methodName],$params);
+call_user_func_array([$currentController, $methodName], $params);

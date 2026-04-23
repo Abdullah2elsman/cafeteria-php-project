@@ -1,17 +1,21 @@
 <?php
 
-class Auth extends Controller {
+class Auth extends Controller
+{
     private $userModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->userModel = $this->model('User');
     }
 
-    public function index() {
+    public function index()
+    {
         $this->login();
     }
 
-    public function login() {
+    public function login()
+    {
         $data = [
             'title' => 'Login | Sip & Savor',
             'css_file' => 'auth.css',
@@ -20,7 +24,8 @@ class Auth extends Controller {
         $this->view('auth/login', $data);
     }
 
-    public function register() {
+    public function register()
+    {
         $data = [
             'title' => 'Create Account | Sip & Savor',
             'css_file' => 'auth.css',
@@ -37,11 +42,12 @@ class Auth extends Controller {
         $this->view('auth/register', $data);
     }
 
-    public function store() {
+    public function store()
+    {
         // Check for POST
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Process form
-            
+
             // Sanitize POST data
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
@@ -49,8 +55,8 @@ class Auth extends Controller {
             $data = [
                 'name' => trim($_POST['name']),
                 'email' => trim($_POST['email']),
-                'password' => trim($_POST['password']),
-                'confirm_password' => trim($_POST['confirm_password']),
+                'password' => $_POST['password'],
+                'confirm_password' => $_POST['confirm_password'],
                 'hide_nav' => true,
                 'name_err' => '',
                 'email_err' => '',
@@ -92,7 +98,7 @@ class Auth extends Controller {
             // Make sure errors are empty
             if (empty($data['email_err']) && empty($data['name_err']) && empty($data['password_err']) && empty($data['confirm_password_err'])) {
                 // Validated
-                
+
                 // Register User
                 if ($this->userModel->register($data)) {
                     flash('register_success', 'You are registered and can log in');
@@ -102,12 +108,10 @@ class Auth extends Controller {
                 } else {
                     die('Something went wrong');
                 }
-
             } else {
                 // Load view with errors
                 $this->view('auth/register', $data);
             }
-
         } else {
             // UnAuthorized request, redirect to register
             header('location: ' . URL_ROOT . '/auth/register');
@@ -115,18 +119,19 @@ class Auth extends Controller {
         }
     }
 
-    public function authenticate() {
+    public function authenticate()
+    {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            
+
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            
+
             $data = [
                 'title' => 'Login | Sip & Savor',
                 'css_file' => 'auth.css',
                 'hide_nav' => true,
                 'email' => trim($_POST['email']),
-                'password' => trim($_POST['password']),
+                'password' => $_POST['password'],
                 'email_err' => '',
                 'password_err' => '',
             ];
@@ -166,7 +171,6 @@ class Auth extends Controller {
                 // Load view with errors
                 $this->view('auth/login', $data);
             }
-
         } else {
             // UnAuthorized request, redirect to login
             header('location: ' . URL_ROOT . '/auth/login');
@@ -174,12 +178,13 @@ class Auth extends Controller {
         }
     }
 
-    public function createUserSession($user) {
+    public function createUserSession($user)
+    {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name'] = $user['name'];
         $_SESSION['user_role'] = $user['role'];
-        
+
         // Redirect to dashboard based on role or just generic dashboard
         if ($user['role'] == 'admin') {
             header('location: ' . URL_ROOT . '/admin/dashboard');
@@ -189,7 +194,8 @@ class Auth extends Controller {
         exit;
     }
 
-    public function logout() {
+    public function logout()
+    {
         unset($_SESSION['user_id']);
         unset($_SESSION['user_email']);
         unset($_SESSION['user_name']);

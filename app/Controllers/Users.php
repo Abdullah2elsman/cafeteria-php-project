@@ -177,16 +177,8 @@ class Users extends Controller {
     public function index()
     {
         $this->requireAdmin();
-        $users = $this->userModel->getAllUsers();
-
-        $data = [
-            'title' => 'User Management',
-            'css_file' => 'dashboard.css',
-            'active_nav' => 'users',
-            'users' => $users
-        ];
-
-        $this->view('admin/users/index', $data);
+        header('Location: ' . URL_ROOT . '/admin/users');
+        exit;
     }
 
     public function add()
@@ -255,7 +247,7 @@ class Users extends Controller {
 
                 if ($this->userModel->addSystemUser($payload)) {
                     flash('user_success', 'User added successfully', 'alert alert-success');
-                    header('Location: ' . URL_ROOT . '/users/index');
+                    header('Location: ' . URL_ROOT . '/admin/users');
                     exit;
                 } else {
                     flash('user_error', 'Something went wrong while adding the user', 'alert alert-danger');
@@ -270,13 +262,13 @@ class Users extends Controller {
     {
         $this->requireAdmin();
         if (!$id) {
-            header('Location: ' . URL_ROOT . '/users/index');
+            header('Location: ' . URL_ROOT . '/admin/users');
             exit;
         }
 
         $user = $this->userModel->getUserById($id);
         if (!$user) {
-            header('Location: ' . URL_ROOT . '/users/index');
+            header('Location: ' . URL_ROOT . '/admin/users');
             exit;
         }
 
@@ -348,7 +340,7 @@ class Users extends Controller {
 
                 if ($this->userModel->updateSystemUser($payload)) {
                     flash('user_success', 'User updated successfully', 'alert alert-success');
-                    header('Location: ' . URL_ROOT . '/users/index');
+                    header('Location: ' . URL_ROOT . '/admin/users');
                     exit;
                 } else {
                     flash('user_error', 'Something went wrong while updating the user', 'alert alert-danger');
@@ -369,7 +361,7 @@ class Users extends Controller {
                 flash('user_error', 'Failed to delete user', 'alert alert-danger');
             }
         }
-        header('Location: ' . URL_ROOT . '/users/index');
+        header('Location: ' . URL_ROOT . '/admin/users');
         exit;
     }
 

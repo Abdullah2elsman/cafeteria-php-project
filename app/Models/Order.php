@@ -241,4 +241,64 @@ class Order {
             'notes' => $notes === '' ? 'None' : $notes
         ];
     }
+
+    public function getGroupedUserChecks($dateFrom = '', $dateTo = '', $userId = 0) {
+        $sql = "SELECT u.id as user_id, u.name as user_name, COUNT(o.id) as total_orders, COALESCE(SUM(o.total_amount), 0) as total_amount
+                FROM users u
+                JOIN orders o ON u.id = o.user_id
+                WHERE 1=1";
+        
+        if ($dateFrom !== '') {
+            $sql .= " AND DATE(o.created_at) >= :date_from";
+        }
+        if ($dateTo !== '') {
+            $sql .= " AND DATE(o.created_at) <= :date_to";
+        }
+        if ($userId > 0) {
+            $sql .= " AND u.id = :user_id";
+        }
+
+        $sql .= " GROUP BY u.id, u.name ORDER BY total_amount DESC";
+
+        $this->db->query($sql);
+        if ($dateFrom !== '') $this->db->bind(':date_from', $dateFrom);
+        if ($dateTo !== '') $this->db->bind(':date_to', $dateTo);
+        if ($userId > 0) $this->db->bind(':user_id', $userId);
+
+        return $this->db->resultSet();
+    }
+
+    public function getFilteredRevenue($dateFrom = '', $dateTo = '', $userId = 0) {
+        $sql = "SELECT COALESCE(SUM(total_amount), 0) as revenue FROM orders WHERE 1=1";
+        
+        if ($dateFrom !== '') {
+            $sql .= " AND DATE(created_at) >= :date_from";
+        }
+        if ($dateTo !== '') {
+            $sql .= " AND DATE(created_at) <= :date_to";
+        }
+        if ($userId > 0) {
+            $sql .= " AND user_id = :user_id";
+        }
+
+        $this->db->query($sql);
+        if ($dateFrom !== '') $this->db->bind(':date_from', $dateFrom);
+        if ($dateTo !== '') $this->db->bind(':date_to', $dateTo);
+        if ($userId > 0) $this->db->bind(':user_id', $userId);
+
+        $row = $this->db->single();
+        return (float) $row['revenue'];
+    }
+
+    public function updateOrderStatus($orderId, $newStatus) {
+        $allowedStatuses = ['pending', 'processing', 'out_for_delivery', 'done', 'cancelled', 'completed'];
+        if (!in_array(strtolower($newStatus), $allowedStatuses)) {
+            return false;
+        }
+
+        $this->db->query("UPDATE orders SET status = :status WHERE id = :id");
+        $this->db->bind(':status', $newStatus);
+        $this->db->bind(':id', (int)$orderId);
+        return $this->db->execute();
+    }
 }

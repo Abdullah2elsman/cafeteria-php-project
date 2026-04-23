@@ -84,7 +84,7 @@
 
         <section style="margin-top: 1.5rem;">
             <!-- Filters -->
-            <form method="GET" action="<?php echo URL_ROOT; ?>/admin/checks" class="filter-form">
+            <form method="GET" action="<?php echo URL_ROOT; ?>/checks" class="filter-form">
                 <div class="filter-group">
                     <label for="date_from">Date From</label>
                     <input type="date" id="date_from" name="date_from" value="<?php echo isset($_GET['date_from']) ? htmlspecialchars($_GET['date_from']) : ''; ?>">
@@ -143,7 +143,7 @@
                                 <td><?php echo $check['total_orders']; ?> Orders</td>
                                 <td style="font-weight: 600; font-size: 1.1rem; color: var(--color-primary);">$<?php echo number_format($check['total_amount'], 2); ?></td>
                                 <td>
-                                    <a href="<?php echo URL_ROOT; ?>/admin/checks/user/<?php echo $check['user_id']; ?>" class="action-btn" title="View details" style="background-color: #e0e7ff; color: #4338ca; width: auto; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none;">View Details</a>
+                                    <a href="<?php echo URL_ROOT; ?>/checks/user/<?php echo $check['user_id']; ?>" class="action-btn" title="View details" style="background-color: #e0e7ff; color: #4338ca; width: auto; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none;">View Details</a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

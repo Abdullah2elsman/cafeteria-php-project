@@ -63,17 +63,7 @@ class Admin extends Controller {
     }
 
     public function checks() {
-        $users = [];
-        if (method_exists($this->userModel, 'getAllUsers')) {
-            $users = $this->userModel->getAllUsers();
-        }
-
-        $data = [
-            'all_users' => $users,
-            'checks' => [],
-            'total_filtered_revenue' => 0.00
-        ];
-
-        $this->view('admin/checks', $data);
+        header('Location: ' . URL_ROOT . '/checks');
+        exit;
     }
 }
